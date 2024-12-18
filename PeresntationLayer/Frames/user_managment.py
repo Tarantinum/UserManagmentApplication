@@ -56,10 +56,10 @@ class UserManagementFrame(Frame):
             self.row_list.append(row)
             row_number += 1
 
-    # Next we want to enable Active and inactive buttons
+    # Next, we want to enable Active and inactive buttons
     # So we create two functions for this buttons
     def active(self):
-        # first we define which columns are selected
+        # first, we define which columns are selected
         active_user_list = self.user_treeview.selection()
         # in next step we need to give this list to business logic
         self.user_business.active_user(self.current_user, active_user_list)

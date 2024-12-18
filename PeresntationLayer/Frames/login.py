@@ -1,5 +1,6 @@
 from tkinter import Frame, Label, Entry, Button, messagebox
 from BusinessLayer.user_business_logic import UserBusinessLogic
+from Common.Decorators.performance_logger import performance_logger_decorator
 
 
 # Frame is its parent
@@ -36,6 +37,7 @@ class LoginFrame(Frame):
         self.register_button = Button(self, text="Register",command=self.open_register_frame)
         self.register_button.grid(row=4, column=1, pady=(0, 10), sticky="w")
 
+    @performance_logger_decorator("LoginFrame")
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
@@ -53,5 +55,6 @@ class LoginFrame(Frame):
         else:
             messagebox.showerror("Error", result.message)
 
+    @performance_logger_decorator("LoginFrame")
     def open_register_frame(self):
         self.main_view.switch_frame("register")

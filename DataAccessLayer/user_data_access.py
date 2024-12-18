@@ -6,7 +6,7 @@ from DataAccessLayer import database_name
 class UserDataAccess:
     # if it has any common thing with other ayers it should have init, but it doesn't so , we don't have any init function
     def get_user_with_username_password(self, username, password):
-        # we get username and password from business layer (outer space)
+        # we get username and password from the business layer (outer space)
         with sqlite3.connect(database_name) as connection:
             cursor = connection.cursor()
             cursor.execute(f"""SELECT id,
@@ -20,16 +20,16 @@ class UserDataAccess:
                               WHERE username = ? AND password = ?
                            """, (username, password))
 
-            # because we did fetchone the data type of the "data" is a tuple
-            # we use fetchone : if there is only a unique answer like identity code
+            # because we did fetchone, the data type of the "data" is a tuple
+            # we use fetchone : if there is only a unique answer like identity code,
             # we use fetchall : if there are more than one answers like searching for a name
             data = cursor.fetchone()
 
             # we create an instant from the User class because we want to code in object-oriented form
-            # instead of writing the data[0],... we could write : *data (unpacking) in the parentheses , but due to security presences
-            # we don't want to show the password to others . therefore our implementation would be like below
-            # User(data[0], data[1], data[2], data[3], None)
-            # but if we wanted to write the code as unpacking form ot would be like this :
+            # instead of writing the data[0], ... we could write : *data (unpacking) in the parentheses, but due to security presences
+            # we don't want to show the password to others. therefore, our implementation would be like below
+            # User (data[0], data[1], data[2], data[3], None),
+            # but if we wanted to write the code as unpacking form, ot would be like this :
             if data:
                 user = User(*data)
                 user.password = None
@@ -39,12 +39,14 @@ class UserDataAccess:
     def get_user_by_username(self, username):
         with sqlite3.connect(database_name) as connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT id, first_name, last_name, username, password,role_id FROM User WHERE username = ?",
-                           (username,))
+            cursor.execute("""
+                SELECT id, first_name, last_name, username, password, role_id, is_active 
+                FROM User 
+                WHERE username = ?
+            """, (username,))
             data = cursor.fetchone()
             if data:
                 return User(*data)
-            return None
 
     def create_user(self, user):
         with sqlite3.connect(database_name) as connection:

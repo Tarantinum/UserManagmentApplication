@@ -1,4 +1,5 @@
 # all the businesses that are realated to the user should be implemented in here
+from Common.Decorators.performance_logger import performance_logger_decorator
 from Common.ResponseModels.response import Response
 from DataAccessLayer.user_data_access import UserDataAccess
 from Common.Entites.user import User
@@ -9,6 +10,7 @@ class UserBusinessLogic:
     def __init__(self):
         self.user_data_access = UserDataAccess()
 
+    @performance_logger_decorator("UserBusinessLogic")
     def login(self, username, password):
         if len(username) < 3 or len(password) < 3:
             return Response(False, "invalid request", None)
@@ -24,6 +26,7 @@ class UserBusinessLogic:
             else:
                 return Response(False, "Your account is inactive", None)
 
+    @performance_logger_decorator("UserBusinessLogic")
     def register(self, firstname, lastname, username, password):
         if not all([firstname, lastname, username, password]):
             return Response(False, "All fields are required", None)
@@ -41,6 +44,7 @@ class UserBusinessLogic:
         else:
             return Response(False, "Registration failed", None)
 
+    @performance_logger_decorator("UserBusinessLogic")
     # we first do some examinations before going through data
     def get_user_list(self, current_user):
         if not current_user.is_active:
@@ -50,13 +54,14 @@ class UserBusinessLogic:
             return Response(False, " Access Denied ", None)
 
         # now it's time for picking data, but we are not connected to the db, so first we should get connected
-        # we send a request to data access layer
+        # we send a request to the data access layer
 
         user_list = self.user_data_access.get_user_list(current_user.id)
         return Response(True, None, user_list)
 
+    @performance_logger_decorator("UserBusinessLogic")
     def active_user(self, current_user, user_list):
-        # it gets the current user again in order to make sure the admin is already active
+        # it gets the current user again to make sure the admin is already active
         if not current_user.is_active:
             return Response(False, "Your account is Inactive ", None)
 
@@ -66,8 +71,9 @@ class UserBusinessLogic:
         for user_id in user_list:
             self.user_data_access.update_is_active(user_id, 1)
 
+    @performance_logger_decorator("UserBusinessLogic")
     def user_inactive(self, current_user, user_list):
-        # it gets the current user again in order to make sure the admin is already active
+        # it gets the current user again to make sure the admin is already active
         if not current_user.is_active:
             return Response(False, "Your account is Inactive ", None)
 

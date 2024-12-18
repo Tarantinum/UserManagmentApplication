@@ -41,7 +41,7 @@
 # this work will down your program, so you should consider a downtime for large databases .
 
 
-# After crating a special page for the admin entrance , next step is to create UserManagement page for admin
+# After crating a special page for the admin entrance, next step is to create UserManagement page for admin
 # we create a file for this in Presentation layer in Frame Directory
 
 # a security hint: if your database is stored in such a way that access to people password is plain , the risk of hacker
@@ -49,13 +49,13 @@
 # for preventing this , we need to do some changes on how to save passwords
 # A method to prevent is to use " hash MD5 "
 # it is an algorithm that receives a value and convert it to another value . but the point is that you can not switch hash to its original value
-# so hash is a one  way convertor . if you need a 2 way one , use encryption (encryption) and decryption (decryption) ( with a ket you can convert )
+# so hash is a one-way convertor. if you need a 2 way one , use encryption (encryption) and decryption (decryption) ( with a ket you can convert )
 # So if the hacker access the key , he has everything !
 # our preference is to use hashing method
-# when user enter his password , first we convert it to a hash code then save the hash code to the database
+#  when a user enters his password , first we convert it to a hash code then save the hash code to the database
 # the reason of insist on not having simple passwords is that there are some common hash codes that can be easily be identified
 # first step : by use of a md5 convertor , we convert all the user's passwords in our db
-# But it is obviuos that user can not enter the application from now on by his original password .
+# But it is obvious that user can not enter the application from now on by his original password .
 
 
 
