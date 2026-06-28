@@ -1,113 +1,145 @@
 # User Management Application
 
-Welcome to the **User Management Application** repository! This project provides a comprehensive solution for managing user data, roles, and permissions effectively, offering both a user-friendly interface and robust backend functionality.
+A desktop application for managing users, roles, and permissions, built with Python and SQLite. The application implements JWT-based authentication, role-based access control (RBAC), and a clean three-layer architecture to ensure maintainability, scalability, and security.
 
 ## 🚀 Features
-- **User Management**: Create, update, and delete user accounts effortlessly.
-- **Role-Based Access Control (RBAC)**: Assign and manage roles with granular permissions.
-- **Search and Filter**: Quickly locate user records through intuitive search and filter options.
-- **Secure Authentication**: Ensures data security through industry-standard practices.
-- **Responsive Design**: Optimized for a seamless experience across devices.
+
+* **JWT Authentication**: Secure token-based authentication using JSON Web Tokens (JWT). Tokens are generated upon successful login and validated before every protected operation.
+* **Role-Based Access Control (RBAC)**: Supports administrator and standard user roles with authorization enforced at the business layer.
+* **User Management**: Administrators can create, activate, deactivate, and manage user accounts.
+* **Secure Password Storage**: Passwords are hashed using the MD5 algorithm before being stored in the database.
+* **Three-Layer Architecture**: Clear separation between Presentation Layer, Business Layer, and Data Access Layer.
+* **Performance Logging**: Decorator-based performance monitoring for tracking execution times across application layers.
+* **Database Persistence**: User information is stored and managed using SQLite.
+* **Unit Testing**: Comprehensive test coverage for business logic, data access operations, and presentation components.
 
 ## 🛠️ Technologies Used
-- **Programming Language**: Python
-- **Database**: SQLite
-- **Frontend**: Tkinter
-- **Tools and Libraries**: 
-  - `tkinter`: For building the graphical user interface, including frames, buttons, labels, and user input fields.
-  - `sqlite3`: For database operations, handling user data persistence and queries.
-  - `unittest`: For testing the application's components and functionality.
-  - `hashlib`: For password hashing using the MD5 algorithm.
-  - `os`: For file and path operations, especially in test database management.
-  - `pytest`: For running and managing tests with detailed reporting.
-  - `decorators`: For performance logging and monitoring function execution.
-  - `Response class`: For standardizing API responses across the application layers.
-  - `unittest`: A built-in Python testing framework used for writing and running test cases. It helps ensure the correctness of individual components of the application. Features include:
-    - **Test Discovery**: Automatically identifies test methods.
-    - **Assertions**: Provides methods like `assertEqual`, `assertIsNotNone`, and `assertTrue` to validate test conditions.
-    - **Fixtures**: Includes `setUp` and `tearDown` for initializing and cleaning up resources before and after each test.
-    - **Test Organization**: Enables grouping tests into test classes for better modularity.
 
+* **Programming Language**: Python 3.11
+* **Database**: SQLite3
+* **GUI Framework**: Tkinter
+* **Authentication**: PyJWT
+* **Testing Frameworks**: unittest, pytest
+* **Libraries and Tools**:
 
+  * `tkinter`: Builds the graphical user interface.
+  * `sqlite3`: Handles database operations and data persistence.
+  * `PyJWT`: Generates and validates JWT tokens.
+  * `hashlib`: Hashes user passwords before storage.
+  * `unittest`: Provides structured unit testing.
+  * `pytest`: Supports advanced test execution and reporting.
+  * `decorators`: Logs performance metrics and execution times.
+  * `Response Class`: Standardizes responses between application layers.
 
 ## 📂 Project Structure
-```
+
+```text
 UserManagementApplication/
 ├── BusinessLayer/
+│   ├── jwt_service.py
 │   └── user_business_logic.py
+│
 ├── Common/
-│   └── Entities/
-│       └── user.py
+│   ├── Decorators/
+│   │   └── performance_logger.py
+│   ├── Entities/
+│   │   └── user.py
+│   └── ResponseModels/
+│       └── response.py
+│
 ├── DataAccessLayer/
 │   └── user_data_access.py
+│
 ├── PresentationLayer/
-│   └── Frames/
-│       ├── home.py
-│       ├── login.py
-│       └── user_management.py
+│   ├── Frames/
+│   │   ├── home.py
+│   │   ├── login.py
+│   │   ├── register.py
+│   │   └── user_management.py
+│   └── main_view.py
+│
 └── Tests/
     ├── business_layer_tests/
-    │   └── test_user_business_logic.py
     ├── data_access_layer_tests/
-    │   └── test_user_data_access.py
     └── presentation_layer_tests/
-        └── test_frames.py
 ```
+
+## 🔐 Authentication Flow
+
+1. User enters login credentials.
+2. Credentials are validated against stored user data.
+3. A JWT token is generated and signed using a secret key.
+4. The token is stored for the active session.
+5. Protected operations pass the token to the Business Layer.
+6. The Business Layer independently validates and decodes the token.
+7. If the token is invalid or expired, access is denied and the user is redirected to the login page.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-1. Install Python (version 3.6 or later).
-2. Ensure `sqlite3` is installed (comes with Python).
+
+* Python 3.6 or later
+* pip package manager
 
 ### Installation
+
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/Tarantinum/UserManagmentApplication.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd UserManagmentApplication
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt  # If applicable
-   ```
+
+```bash
+git clone https://github.com/Tarantinum/UserManagmentApplication.git
+cd UserManagmentApplication
+```
+
+2. Install required dependencies:
+
+```bash
+pip install PyJWT
+```
 
 ### Running the Application
-Run the application using the following command:
+
 ```bash
 python main.py
 ```
 
 ### Running Tests
-Run the test suite to ensure everything is working:
+
 ```bash
 pytest
 ```
 
 ## 🤝 Contributing
-I welcome contributions to enhance the application! To contribute:
+
+Contributions are welcome! To contribute:
+
 1. Fork the repository.
-2. Create a new branch for your feature or fix:
-   ```bash
-   git checkout -b feature/YourFeatureName
-   ```
-3. Make your changes and commit them:
-   ```bash
-   git commit -m "Add feature description"
-   ```
-4. Push to your branch:
-   ```bash
-   git push origin feature/YourFeatureName
-   ```
-5. Open a pull request on GitHub.
+2. Create a new branch:
+
+```bash
+git checkout -b feature/YourFeatureName
+```
+
+3. Commit your changes:
+
+```bash
+git commit -m "Add feature description"
+```
+
+4. Push your branch:
+
+```bash
+git push origin feature/YourFeatureName
+```
+
+5. Open a Pull Request.
 
 ## 📧 Contact
-If you have any questions or suggestions, feel free to contact me:  
-- **Email**: tatabhra@gmail.com  
-- **LinkedIn**: [Taranom Bahiraee](https://linkedin.com/in/taranom-bahiraee-85a58232b)
 
+If you have any questions or suggestions, feel free to contact me:
+
+* **Email**: [tatabhra@gmail.com](mailto:tatabhra@gmail.com)
+* **LinkedIn**: https://linkedin.com/in/taranom-bahiraee-85a58232b
 
 ---
-Thank you for checking out this project! If you found it helpful, please consider giving it a ⭐ on GitHub. Your support means a lot! 💖
+
+⭐ If you found this project helpful, consider giving it a star on GitHub. Your support is greatly appreciated!
