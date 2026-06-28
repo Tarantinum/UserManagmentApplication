@@ -29,7 +29,7 @@ A desktop application for managing users, roles, and permissions — built with 
 ## 📂 Project Structure
 
 ```text
-UserManagementApplication/
+UserManagmentApplication/
 
 ├── BusinessLayer/
 │   ├── jwt_service.py
@@ -46,7 +46,7 @@ UserManagementApplication/
 ├── DataAccessLayer/
 │   └── user_data_access.py
 
-├── PresentationLayer/
+├── PeresntationLayer/
 │   ├── Frames/
 │   │   ├── home.py
 │   │   ├── login.py
