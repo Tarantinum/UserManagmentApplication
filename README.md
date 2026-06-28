@@ -117,14 +117,29 @@ python main.py
 
 ---
 
-## 🧪 Testing
-
-### Run Tests
-
+### Running Tests
+Run the test suite to ensure everything is working:
 ```bash
 pytest
 ```
 
+--- 
+## 🤝 Contributing
+I welcome contributions to enhance the application! To contribute:
+1. Fork the repository.
+2. Create a new branch for your feature or fix:
+   ```bash
+   git checkout -b feature/YourFeatureName
+   ```
+3. Make your changes and commit them:
+   ```bash
+   git commit -m "Add feature description"
+   ```
+4. Push to your branch:
+   ```bash
+   git push origin feature/YourFeatureName
+   ```
+5. Open a pull request on GitHub.
 ---
 
 ## 📧 Contact
@@ -133,5 +148,4 @@ pytest
 - **LinkedIn**: [Taranom Bahiraee](https://linkedin.com/in/taranom-bahiraee-85a58232b)
 
 ---
-
-If you found this project helpful, consider giving it a ⭐ on GitHub!
+Thank you for checking out this project! If you found it helpful, please consider giving it a ⭐ on GitHub. Your support means a lot! 💖
