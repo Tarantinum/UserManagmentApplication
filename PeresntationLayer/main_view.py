@@ -12,7 +12,7 @@ class MainView:
         self.frames = {}  # creating an empty dictionary
         self.window = Window()
         # the last added frame will be shown first
-        self.add_frames("user_management", UserManagementFrame(self.window))
+        self.add_frames("user_management", UserManagementFrame(self.window,self))
         self.add_frames("register", RegisterFrame(self.window, self))
         self.add_frames("home", HomeFrame(self.window, self))
         self.add_frames("Login", LoginFrame(self.window, self))

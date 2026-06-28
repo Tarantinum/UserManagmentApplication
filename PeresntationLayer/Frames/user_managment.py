@@ -4,13 +4,13 @@ from BusinessLayer.user_business_logic import UserBusinessLogic
 
 
 class UserManagementFrame(Frame):
-    def __init__(self, window):
+    def __init__(self, window, main_view):
         super().__init__(window)
 
+        self.main_view = main_view  # ADD this
         self.row_list = []
-
         self.user_business = UserBusinessLogic()
-        self.current_user = None
+        self.current_token = None  # was self.current_user
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
 
@@ -33,14 +33,11 @@ class UserManagementFrame(Frame):
         self.user_treeview.heading("#4", text="Role")
         self.user_treeview.heading("#5", text="Status")
 
-    def set_current_user(self, current_user):
-        self.current_user = current_user
-        result = self.user_business.get_user_list(current_user)
-
+    def set_current_user(self, token):  # receives token now, not a User object
+        self.current_token = token
         self.get_user_list()
 
     def load_data(self, user_list):
-
         for row in self.row_list:
             self.user_treeview.delete(row)
 
@@ -48,33 +45,37 @@ class UserManagementFrame(Frame):
 
         row_number = 1
         for user in user_list:
-            row = self.user_treeview.insert("", "end", iid=user.id, text=str(row_number), values=(user.firstname,
-                                                                                                  user.lastname,
-                                                                                                  user.username,
-                                                                                                  user.show_role_title(),
-                                                                                                  "Active" if user.is_active else "InActive"))
+            row = self.user_treeview.insert("", "end", iid=user.id, text=str(row_number),
+                                            values=(user.firstname,
+                                                    user.lastname,
+                                                    user.username,
+                                                    user.show_role_title(),
+                                                    "Active" if user.is_active else "InActive"))
             self.row_list.append(row)
             row_number += 1
 
-    # Next, we want to enable Active and inactive buttons
-    # So we create two functions for this buttons
     def active(self):
-        # first, we define which columns are selected
         active_user_list = self.user_treeview.selection()
-        # in next step we need to give this list to business logic
-        self.user_business.active_user(self.current_user, active_user_list)
-        # after commiting the update we need to reload the table once again
+        result = self.user_business.active_user(self.current_token, active_user_list)
+        if result and not result.success:
+            messagebox.showerror("Error", result.message)
+            return
         self.get_user_list()
 
     def inactive(self):
         inactive_user_list = self.user_treeview.selection()
-        self.user_business.user_inactive(self.current_user, inactive_user_list)
+        result = self.user_business.user_inactive(self.current_token, inactive_user_list)
+        if result and not result.success:
+            messagebox.showerror("Error", result.message)
+            return
         self.get_user_list()
 
     def get_user_list(self):
-        result = self.user_business.get_user_list(self.current_user)
+        result = self.user_business.get_user_list(self.current_token)
 
         if result.success:
             self.load_data(result.data)
         else:
             messagebox.showerror("Error", result.message)
+            if "expired" in result.message.lower() or "invalid session" in result.message.lower():
+                self.main_view.switch_frame("Login")  # redirect to login

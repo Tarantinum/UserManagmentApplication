@@ -4,7 +4,9 @@ from Common.ResponseModels.response import Response
 from DataAccessLayer.user_data_access import UserDataAccess
 from Common.Entites.user import User
 import hashlib
-
+from BusinessLayer.jwt_service import generate_token
+import jwt
+from BusinessLayer.jwt_service import decode_token
 
 class UserBusinessLogic:
     def __init__(self):
@@ -14,17 +16,16 @@ class UserBusinessLogic:
     def login(self, username, password):
         if len(username) < 3 or len(password) < 3:
             return Response(False, "invalid request", None)
-
         password_hash = hashlib.md5(password.encode()).hexdigest()
-
         user = self.user_data_access.get_user_with_username_password(username, password_hash)
         if not user:
-            return Response(False, " Invalid username or password . ", None)
-        else:
-            if user.is_active:
-                return Response(True, None, user)
-            else:
-                return Response(False, "Your account is inactive", None)
+            return Response(False, "Invalid username or password.", None)
+        if not user.is_active:
+            return Response(False, "Your account is inactive", None)
+
+        # NEW: generate token and return it as the data payload
+        token = generate_token(user)
+        return Response(True, None, token)
 
     @performance_logger_decorator("UserBusinessLogic")
     def register(self, firstname, lastname, username, password):
@@ -36,7 +37,7 @@ class UserBusinessLogic:
             return Response(False, "Username already exists", None)
 
         password_hash = hashlib.md5(password.encode()).hexdigest()
-        new_user = User(None, firstname, lastname, username, password_hash,2,0)
+        new_user = User(None, firstname, lastname, username, password_hash, 2, 0)
         success = self.user_data_access.create_user(new_user)
 
         if success:
@@ -45,40 +46,54 @@ class UserBusinessLogic:
             return Response(False, "Registration failed", None)
 
     @performance_logger_decorator("UserBusinessLogic")
-    # we first do some examinations before going through data
-    def get_user_list(self, current_user):
-        if not current_user.is_active:
-            return Response(False, "Your account is Inactive ", None)
+    def get_user_list(self, token):
+        try:
+            payload = decode_token(token)
+        except jwt.ExpiredSignatureError:
+            return Response(False, "Session expired. Please log in again.", None)
+        except jwt.InvalidTokenError:
+            return Response(False, "Invalid session. Please log in again.", None)
 
-        if not current_user.show_role_title() == "Admin":
-            return Response(False, " Access Denied ", None)
+        if not payload["is_active"]:
+            return Response(False, "Your account is Inactive", None)
+        if payload["role_id"] != 1:
+            return Response(False, "Access Denied", None)
 
-        # now it's time for picking data, but we are not connected to the db, so first we should get connected
-        # we send a request to the data access layer
-
-        user_list = self.user_data_access.get_user_list(current_user.id)
+        user_list = self.user_data_access.get_user_list(payload["user_id"])
         return Response(True, None, user_list)
 
     @performance_logger_decorator("UserBusinessLogic")
-    def active_user(self, current_user, user_list):
-        # it gets the current user again to make sure the admin is already active
-        if not current_user.is_active:
-            return Response(False, "Your account is Inactive ", None)
+    def active_user(self, token, user_list):
+        try:
+            payload = decode_token(token)
+        except jwt.ExpiredSignatureError:
+            return Response(False, "Session expired. Please log in again.", None)
+        except jwt.InvalidTokenError:
+            return Response(False, "Invalid session. Please log in again.", None)
 
-        if not current_user.show_role_title() == "Admin":
-            return Response(False, " Access Denied ", None)
+        if not payload["is_active"]:
+            return Response(False, "Your account is Inactive", None)
+        if payload["role_id"] != 1:
+            return Response(False, "Access Denied", None)
 
         for user_id in user_list:
             self.user_data_access.update_is_active(user_id, 1)
+        return Response(True, "Users activated successfully.", None)
 
     @performance_logger_decorator("UserBusinessLogic")
-    def user_inactive(self, current_user, user_list):
-        # it gets the current user again to make sure the admin is already active
-        if not current_user.is_active:
-            return Response(False, "Your account is Inactive ", None)
+    def user_inactive(self, token, user_list):
+        try:
+            payload = decode_token(token)
+        except jwt.ExpiredSignatureError:
+            return Response(False, "Session expired. Please log in again.", None)
+        except jwt.InvalidTokenError:
+            return Response(False, "Invalid session. Please log in again.", None)
 
-        if not current_user.show_role_title() == "Admin":
-            return Response(False, " Access Denied ", None)
+        if not payload["is_active"]:
+            return Response(False, "Your account is Inactive", None)
+        if payload["role_id"] != 1:
+            return Response(False, "Access Denied", None)
 
         for user_id in user_list:
             self.user_data_access.update_is_active(user_id, 0)
+        return Response(True, "Users deactivated successfully.", None)

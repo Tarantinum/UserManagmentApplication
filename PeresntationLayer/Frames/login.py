@@ -5,7 +5,7 @@ from Common.Decorators.performance_logger import performance_logger_decorator
 
 # Frame is its parent
 class LoginFrame(Frame):
-    # by giving it the window parameter we assign that this frame should be displayed on this form
+    # by giving it the window parameter, we assign that this frame should be displayed on this form
     def __init__(self, window, main_view):
         super().__init__(window)
 
@@ -41,17 +41,13 @@ class LoginFrame(Frame):
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
-        # result is an object from response class
         result = self.user_business_logic.login(username, password)
-
         if result.success:
-            # messagebox.showinfo("Information",f"Welcome {result.data.get_fullname()}")
+            # result.data is now a JWT token string instead of a User object
             home_frame = self.main_view.switch_frame("home")
-            home_frame.set_current_user(result.data)
-
+            home_frame.set_current_user(result.data)  # passes token, not user
             self.username_entry.delete(0, "end")
             self.password_entry.delete(0, "end")
-
         else:
             messagebox.showerror("Error", result.message)
 
